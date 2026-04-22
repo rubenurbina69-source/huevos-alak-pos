@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cortes Premium</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .cortes-title {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .cortes-subtitle {
+            text-align: center;
+            color: #aaaaaa;
+            margin-bottom: 25px;
+        }
+
+        .usuario-activo {
+            text-align: center;
+            font-weight: bold;
+            color: #ff7a00;
+            margin-bottom: 20px;
+        }
+
+        .resumen-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .resumen-card {
+            background: #121212;
+            border: 1px solid #2a2a2a;
+            border-radius: 20px;
+            padding: 22px;
+            box-shadow: 0 0 20px rgba(255, 122, 0, 0.10);
+        }
+
+        .resumen-card .label {
+            color: #ff7a00;
+            font-size: 14px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .resumen-card .valor {
+            color: white;
+            font-size: 34px;
+            font-weight: bold;
+        }
+
+        .bloque {
+            background: #121212;
+            border: 1px solid #2a2a2a;
+            border-radius: 20px;
+            padding: 22px;
+            margin-bottom: 24px;
+            box-shadow: 0 0 18px rgba(255, 122, 0, 0.08);
+        }
+
+        .bloque h2 {
+            color: white;
+            margin-top: 0;
+        }
+
+        .filtros-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .acciones-filtro {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+        }
+
+        .btn-naranja {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            box-sizing: border-box;
+            display: inline-block;
+        }
+
+        .btn-naranja:hover {
+            filter: brightness(1.05);
+        }
+
+        .btn-oscuro {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            background: #1e1e1e;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            box-sizing: border-box;
+            display: inline-block;
+        }
+
+        .btn-oscuro:hover {
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+        }
+
+        .graficas-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        .chart-box {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 18px;
+            padding: 18px;
+        }
+
+        .chart-box h3 {
+            color: #ff7a00;
+            margin-top: 0;
+            margin-bottom: 12px;
+        }
+
+        .tabla-scroll {
+            overflow-x: auto;
+        }
+
+        .tabla-scroll table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #121212;
+        }
+
+        .tabla-scroll th,
+        .tabla-scroll td {
+            padding: 12px;
+            border-bottom: 1px solid #2a2a2a;
+            text-align: left;
+            color: white;
+            white-space: nowrap;
+        }
+
+        .tabla-scroll th {
+            color: #ff7a00;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <div class="dashboard-card">
+
+        <h1 class="cortes-title">Cortes Premium</h1>
+        <p class="cortes-subtitle">Resumen financiero y operativo del sistema</p>
+        <p class="usuario-activo">Usuario activo: {{ usuario.nombre }}</p>
+
+        <div class="resumen-grid">
+            <div class="resumen-card">
+                <div class="label">Caja inicial</div>
+                <div class="valor">${{ config.caja_inicial if config else 0 }}</div>
+            </div>
+
+            <div class="resumen-card">
+                <div class="label">Producido Ponedoras</div>
+                <div class="valor">{{ producido_ponedoras }}</div>
+            </div>
+
+            <div class="resumen-card">
+                <div class="label">Producido Afuera</div>
+                <div class="valor">{{ producido_afuera }}</div>
+            </div>
+
+            <div class="resumen-card">
+                <div class="label">Producido Jolota</div>
+                <div class="valor">{{ producido_jolota }}</div>
+            </div>
+
+            <div class="resumen-card">
+                <div class="label">Producción total</div>
+                <div class="valor">{{ total_producido }}</div>
+            </div>
+
+            <div class="resumen-card">
+                <div class="label">Total vendido</div>
+                <div class="valor">${{ total_vendido }}</div>
+            </div>
+
+            <div class="resumen-card">
+                <div class="label">Total gastos</div>
+                <div class="valor">${{ total_gastos }}</div>
+            </div>
+
+            <div class="resumen-card">
+                <div class="label">Utilidad</div>
+                <div class="valor">${{ utilidad }}</div>
+            </div>
+        </div>
+
+        <div class="bloque">
+            <h2>Buscador premium de cortes</h2>
+
+            <form action="/cortes" method="get">
+                <div class="filtros-grid">
+                    <div>
+                        <label>Fecha inicio</label>
+                        <input type="date" name="fecha_inicio" value="{{ fecha_inicio }}">
+                    </div>
+
+                    <div>
+                        <label>Fecha fin</label>
+                        <input type="date" name="fecha_fin" value="{{ fecha_fin }}">
+                    </div>
+                </div>
+
+                <div class="acciones-filtro">
+                    <button type="submit" class="btn-naranja">Buscar</button>
+                    <a href="/cortes?filtro_rapido=semana" class="btn-oscuro">Esta semana</a>
+                    <a href="/cortes?filtro_rapido=mes" class="btn-oscuro">Este mes</a>
+                    <a href="/cortes?filtro_rapido=anio" class="btn-oscuro">Este año</a>
+                    <a href="/cortes" class="btn-oscuro">Limpiar</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="bloque">
+            <h2>Generar corte y arrancar nueva semana</h2>
+            <form action="/cortes/generar" method="post">
+                <div class="filtros-grid">
+                    <div>
+                        <label>Nueva caja inicial</label>
+                        <input type="number" step="0.01" name="caja_inicial_nueva" required>
+                    </div>
+
+                    <div>
+                        <label>Ponedoras para iniciar semana</label>
+                        <input type="number" name="ponedoras_nueva" required>
+                    </div>
+
+                    <div>
+                        <label>Ponedoras de afuera para iniciar semana</label>
+                        <input type="number" name="ponedoras_afuera_nueva" required>
+                    </div>
+
+                    <div>
+                        <label>Jolota para iniciar semana</label>
+                        <input type="number" name="jolota_nueva" required>
+                    </div>
+                </div>
+
+                <br>
+                <button type="submit" class="btn-naranja">Guardar corte histórico y reiniciar semana</button>
+            </form>
+        </div>
+
+        <div class="bloque">
+            <h2>Gráficas del negocio</h2>
+
+            <div class="graficas-grid">
+                <div class="chart-box">
+                    <h3>Ventas vs Gastos</h3>
+                    <canvas id="ventasGastosChart"></canvas>
+                </div>
+
+                <div class="chart-box">
+                    <h3>Utilidad histórica</h3>
+                    <canvas id="utilidadChart"></canvas>
+                </div>
+
+                <div class="chart-box">
+                    <h3>Producción por tipo</h3>
+                    <canvas id="produccionTiposChart"></canvas>
+                </div>
+
+                <div class="chart-box">
+                    <h3>Inventario actual</h3>
+                    <canvas id="inventarioChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="bloque">
+            <h2>Histórico de cortes</h2>
+            <div class="tabla-scroll">
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>Fecha</th>
+                        <th>Caja inicial</th>
+                        <th>Caja final</th>
+                        <th>Ponedoras</th>
+                        <th>Afuera</th>
+                        <th>Jolota</th>
+                        <th>Total</th>
+                        <th>Vendido</th>
+                        <th>Gastos</th>
+                        <th>Utilidad</th>
+                        <th>Pon. inicial</th>
+                        <th>Pon. final</th>
+                        <th>Afuera inicial</th>
+                        <th>Afuera final</th>
+                        <th>Jolota inicial</th>
+                        <th>Jolota final</th>
+                        <th>PDF</th>
+                    </tr>
+                    {% for h in historico %}
+                    <tr>
+                        <td>{{ h.id }}</td>
+                        <td>{{ h.fecha_corte }}</td>
+                        <td>${{ h.caja_inicial_semana }}</td>
+                        <td>${{ h.caja_final_semana }}</td>
+                        <td>{{ h.producido_ponedoras }}</td>
+                        <td>{{ h.producido_afuera }}</td>
+                        <td>{{ h.producido_jolota }}</td>
+                        <td>{{ h.total_producido }}</td>
+                        <td>${{ h.total_vendido }}</td>
+                        <td>${{ h.total_gastos }}</td>
+                        <td>${{ h.utilidad }}</td>
+                        <td>{{ h.ponedoras_inicial_semana }}</td>
+                        <td>{{ h.ponedoras_final_semana }}</td>
+                        <td>{{ h.ponedoras_afuera_inicial_semana }}</td>
+                        <td>{{ h.ponedoras_afuera_final_semana }}</td>
+                        <td>{{ h.jolota_inicial_semana }}</td>
+                        <td>{{ h.jolota_final_semana }}</td>
+                        <td><a href="/cortes/pdf/{{ h.id }}" class="btn-oscuro">PDF</a></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+
+        <a href="/dashboard" class="btn-volver">⬅ Volver al menú principal</a>
+
+    </div>
+</div>
+
+<script>
+    const labelsHistorico = {{ labels_historico | tojson }};
+    const ventasHistorico = {{ ventas_historico | tojson }};
+    const gastosHistorico = {{ gastos_historico | tojson }};
+    const utilidadHistorico = {{ utilidad_historico | tojson }};
+
+    const producidoPonedorasHist = {{ producido_ponedoras_hist | tojson }};
+    const producidoAfueraHist = {{ producido_afuera_hist | tojson }};
+    const producidoJolotaHist = {{ producido_jolota_hist | tojson }};
+
+    const inventarioLabels = {{ inventario_labels | tojson }};
+    const inventarioData = {{ inventario_data | tojson }};
+
+    new Chart(document.getElementById('ventasGastosChart'), {
+        type: 'bar',
+        data: {
+            labels: labelsHistorico,
+            datasets: [
+                {
+                    label: 'Ventas',
+                    data: ventasHistorico,
+                    backgroundColor: '#ff7a00'
+                },
+                {
+                    label: 'Gastos',
+                    data: gastosHistorico,
+                    backgroundColor: '#b13a00'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { labels: { color: '#ffffff' } }
+            },
+            scales: {
+                x: {
+                    ticks: { color: '#ffffff' },
+                    grid: { color: '#2a2a2a' }
+                },
+                y: {
+                    ticks: { color: '#ffffff' },
+                    grid: { color: '#2a2a2a' }
+                }
+            }
+        }
+    });
+
+    new Chart(document.getElementById('utilidadChart'), {
+        type: 'line',
+        data: {
+            labels: labelsHistorico,
+            datasets: [
+                {
+                    label: 'Utilidad',
+                    data: utilidadHistorico,
+                    borderColor: '#ff7a00',
+                    backgroundColor: 'rgba(255, 122, 0, 0.2)',
+                    fill: true,
+                    tension: 0.3
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { labels: { color: '#ffffff' } }
+            },
+            scales: {
+                x: {
+                    ticks: { color: '#ffffff' },
+                    grid: { color: '#2a2a2a' }
+                },
+                y: {
+                    ticks: { color: '#ffffff' },
+                    grid: { color: '#2a2a2a' }
+                }
+            }
+        }
+    });
+
+    new Chart(document.getElementById('produccionTiposChart'), {
+        type: 'bar',
+        data: {
+            labels: labelsHistorico,
+            datasets: [
+                {
+                    label: 'Ponedoras',
+                    data: producidoPonedorasHist,
+                    backgroundColor: '#ff7a00'
+                },
+                {
+                    label: 'Ponedoras de afuera',
+                    data: producidoAfueraHist,
+                    backgroundColor: '#b13a00'
+                },
+                {
+                    label: 'Jolota',
+                    data: producidoJolotaHist,
+                    backgroundColor: '#ffb347'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { labels: { color: '#ffffff' } }
+            },
+            scales: {
+                x: {
+                    ticks: { color: '#ffffff' },
+                    grid: { color: '#2a2a2a' }
+                },
+                y: {
+                    ticks: { color: '#ffffff' },
+                    grid: { color: '#2a2a2a' }
+                }
+            }
+        }
+    });
+
+    new Chart(document.getElementById('inventarioChart'), {
+        type: 'doughnut',
+        data: {
+            labels: inventarioLabels,
+            datasets: [{
+                data: inventarioData,
+                backgroundColor: ['#ff7a00', '#b13a00', '#ffb347']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { labels: { color: '#ffffff' } }
+            }
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket de venta - Huevos Alak</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .ticket-wrap {
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        .ticket-header {
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+            border-radius: 22px;
+            padding: 28px 24px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 0 24px rgba(255, 122, 0, 0.18);
+            margin-bottom: 24px;
+        }
+
+        .ticket-logo {
+            width: 140px;
+            max-width: 100%;
+            margin-bottom: 14px;
+        }
+
+        .ticket-header h1 {
+            margin: 0;
+            font-size: 40px;
+            color: white;
+        }
+
+        .ticket-header p {
+            margin: 8px 0 0 0;
+            font-size: 18px;
+            color: #fff5eb;
+        }
+
+        .ticket-card {
+            background: #121212;
+            border: 1px solid #2a2a2a;
+            border-radius: 22px;
+            padding: 26px;
+            box-shadow: 0 0 22px rgba(255, 122, 0, 0.08);
+        }
+
+        .ticket-card h2 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 22px;
+            color: #ffffff;
+            font-size: 28px;
+        }
+
+        .ticket-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+        }
+
+        .ticket-item {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .ticket-item strong {
+            display: block;
+            font-size: 14px;
+            color: #ff7a00;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .ticket-item span {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffffff;
+            word-break: break-word;
+        }
+
+        .ticket-total {
+            margin-top: 22px;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 18px;
+            padding: 22px;
+            text-align: center;
+        }
+
+        .ticket-total strong {
+            display: block;
+            color: #ff7a00;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .ticket-total span {
+            font-size: 40px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .ticket-footer {
+            margin-top: 22px;
+            text-align: center;
+            color: #aaaaaa;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .ticket-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-top: 24px;
+        }
+
+        .ticket-btn {
+            display: inline-block;
+            text-align: center;
+            padding: 16px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            border: 1px solid #2a2a2a;
+            background: #1e1e1e;
+            color: white;
+            cursor: pointer;
+        }
+
+        .ticket-btn:hover {
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+            color: white;
+        }
+
+        .ticket-btn.primario {
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+            border: none;
+        }
+
+        .ticket-btn.primario:hover {
+            filter: brightness(1.05);
+        }
+
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+            }
+
+            .ticket-actions,
+            .btn-volver {
+                display: none !important;
+            }
+
+            .dashboard-container,
+            .dashboard-card,
+            .ticket-card {
+                box-shadow: none !important;
+                background: white !important;
+                color: black !important;
+                border: 1px solid #999 !important;
+            }
+
+            .ticket-header {
+                background: #ffffff !important;
+                color: black !important;
+                border: 1px solid #999 !important;
+                box-shadow: none !important;
+            }
+
+            .ticket-header h1,
+            .ticket-header p,
+            .ticket-card h2,
+            .ticket-item span,
+            .ticket-total span {
+                color: black !important;
+            }
+
+            .ticket-item,
+            .ticket-total {
+                background: white !important;
+                color: black !important;
+                border: 1px solid #ccc !important;
+            }
+
+            .ticket-item strong,
+            .ticket-total strong {
+                color: #333 !important;
+            }
+
+            .ticket-footer {
+                color: #333 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <div class="dashboard-card ticket-wrap">
+
+        {% if venta and producto %}
+            <div class="ticket-header">
+                <img src="/static/logo.png" alt="Huevos Alak" class="ticket-logo">
+                <h1>VENTA CONFIRMADA</h1>
+                <p>La operación se registró correctamente en el sistema</p>
+            </div>
+
+            <div class="ticket-card">
+                <h2>Ticket de venta</h2>
+
+                <div class="ticket-grid">
+                    <div class="ticket-item">
+                        <strong>Folio</strong>
+                        <span>{{ venta.id }}</span>
+                    </div>
+
+                    <div class="ticket-item">
+                        <strong>Fecha</strong>
+                        <span>{{ venta.fecha }}</span>
+                    </div>
+
+                    <div class="ticket-item">
+                        <strong>Usuario</strong>
+                        <span>{{ venta.responsable }}</span>
+                    </div>
+
+                    <div class="ticket-item">
+                        <strong>Origen</strong>
+                        <span>{{ venta.tipo_huevo_origen }}</span>
+                    </div>
+
+                    <div class="ticket-item">
+                        <strong>Presentación</strong>
+                        <span>{{ producto.nombre }}</span>
+                    </div>
+
+                    <div class="ticket-item">
+                        <strong>Cantidad</strong>
+                        <span>{{ venta.cantidad_presentaciones }}</span>
+                    </div>
+
+                    <div class="ticket-item">
+                        <strong>Huevos reales</strong>
+                        <span>{{ venta.huevos_reales }}</span>
+                    </div>
+
+                    <div class="ticket-item">
+                        <strong>Precio unitario</strong>
+                        <span>${{ producto.precio }}</span>
+                    </div>
+                </div>
+
+                <div class="ticket-total">
+                    <strong>Total de la venta</strong>
+                    <span>${{ venta.total }}</span>
+                </div>
+
+                <div class="ticket-footer">
+                    Huevos Alak POS<br>
+                    Ticket generado por el sistema
+                </div>
+
+                <div class="ticket-actions">
+                    <a href="/ventas" class="ticket-btn primario">Nueva venta</a>
+                    <a href="/dashboard" class="ticket-btn">Menú principal</a>
+                    <button onclick="window.print()" class="ticket-btn">Imprimir ticket</button>
+                </div>
+            </div>
+        {% else %}
+            <div class="ticket-header">
+                <img src="/static/logo.png" alt="Huevos Alak" class="ticket-logo">
+                <h1>Ticket no encontrado</h1>
+                <p>No se pudo cargar la venta solicitada</p>
+            </div>
+
+            <div class="ticket-actions">
+                <a href="/ventas" class="ticket-btn primario">Volver a ventas</a>
+                <a href="/dashboard" class="ticket-btn">Menú principal</a>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi cuenta</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .info-box {
+            background: #000000;
+            border: 1px solid #b97c0a;
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 20px;
+        }
+
+        .mensaje-ok {
+            color: green;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .mensaje-error {
+            color: #b00020;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <div class="dashboard-card">
+        <h1>Mi cuenta</h1>
+
+        <div class="info-box">
+            <p><strong>Nombre:</strong> {{ usuario.nombre }}</p>
+            <p><strong>Usuario:</strong> {{ usuario.usuario }}</p>
+            <p><strong>Rol:</strong> {{ usuario.rol }}</p>
+        </div>
+
+        {% if mensaje %}
+            <p class="mensaje-ok">{{ mensaje }}</p>
+        {% endif %}
+
+        {% if error %}
+            <p class="mensaje-error">{{ error }}</p>
+        {% endif %}
+
+        <h2>Cambiar contraseña</h2>
+
+        <form action="/mi-cuenta/cambiar-password" method="post">
+            <label>Contraseña actual</label>
+            <input type="password" name="password_actual" required>
+
+            <label>Nueva contraseña</label>
+            <input type="password" name="password_nueva" required>
+
+            <label>Confirmar nueva contraseña</label>
+            <input type="password" name="password_confirmacion" required>
+
+            <button type="submit">Guardar nueva contraseña</button>
+        </form>
+
+        <a href="/dashboard" class="btn-volver">Volver al menú principal</a>
+    </div>
+</div>
+</body>
+</html>

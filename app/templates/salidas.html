@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salidas Touch Pro</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .salidas-title {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .salidas-subtitle {
+            text-align: center;
+            color: #aaaaaa;
+            margin-bottom: 25px;
+        }
+
+        .usuario-activo {
+            text-align: center;
+            font-weight: bold;
+            color: #ff7a00;
+            margin-bottom: 20px;
+        }
+
+        .step-box {
+            background: #121212;
+            border: 1px solid #2a2a2a;
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 22px;
+            box-shadow: 0 0 20px rgba(255, 122, 0, 0.12);
+        }
+
+        .step-title {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .touch-option {
+            background: #1e1e1e;
+            color: white;
+            border-radius: 18px;
+            padding: 22px 16px;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            transition: 0.2s ease;
+            border: 1px solid #2a2a2a;
+        }
+
+        .touch-option:hover {
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+            transform: translateY(-2px);
+        }
+
+        .touch-option.selected {
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+            color: white;
+        }
+
+        .touch-option .nombre {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .touch-option .detalle {
+            font-size: 14px;
+            color: #dddddd;
+        }
+
+        .cantidad-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .cantidad-btn {
+            width: 70px;
+            height: 70px;
+            border: none;
+            border-radius: 18px;
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+            color: white;
+            font-size: 34px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .cantidad-input {
+            width: 140px;
+            height: 70px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            border-radius: 18px;
+            border: 1px solid #2a2a2a;
+            background: #1e1e1e;
+            color: white;
+        }
+
+        .resumen-box {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 18px;
+            padding: 18px;
+        }
+
+        .resumen-box p {
+            margin: 8px 0;
+            font-size: 18px;
+        }
+
+        .confirmar-btn {
+            font-size: 22px;
+            padding: 18px;
+            border-radius: 16px;
+            margin-top: 10px;
+        }
+
+        .historial-scroll {
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <div class="dashboard-card">
+
+        <h1 class="salidas-title">Salidas Touch Pro</h1>
+        <p class="salidas-subtitle">Registro táctil de incubadora, rotos y pequeños</p>
+        <p class="usuario-activo">Usuario activo: {{ usuario.nombre }}</p>
+
+        <form action="/salidas" method="post" id="salidaForm">
+            <input type="hidden" name="tipo_huevo" id="tipo_huevo" required>
+            <input type="hidden" name="motivo" id="motivo" required>
+
+            <div class="step-box">
+                <div class="step-title">1. Elige el tipo de huevo</div>
+                <div class="card-grid">
+                    <div class="touch-option tipo-card" data-tipo="Ponedoras">
+                        <div class="nombre">Ponedoras</div>
+                        <div class="detalle">Roto o pequeño</div>
+                    </div>
+
+                    <div class="touch-option tipo-card" data-tipo="Ponedoras de afuera">
+                        <div class="nombre">Ponedoras de afuera</div>
+                        <div class="detalle">Incubadora o roto</div>
+                    </div>
+
+                    <div class="touch-option tipo-card" data-tipo="Jolota">
+                        <div class="nombre">Jolota</div>
+                        <div class="detalle">Incubadora o roto</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-box">
+                <div class="step-title">2. Elige el motivo</div>
+                <div class="card-grid" id="motivosGrid">
+                    <div class="touch-option" style="opacity:.6; pointer-events:none;">
+                        <div class="nombre">Primero elige</div>
+                        <div class="detalle">el tipo de huevo</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-box">
+                <div class="step-title">3. Cantidad</div>
+                <div class="cantidad-box">
+                    <button type="button" class="cantidad-btn" onclick="cambiarCantidad(-1)">−</button>
+                    <input type="number" class="cantidad-input" id="cantidad" name="cantidad" value="1" min="1" required>
+                    <button type="button" class="cantidad-btn" onclick="cambiarCantidad(1)">+</button>
+                </div>
+            </div>
+
+            <div class="step-box">
+                <div class="step-title">4. Resumen</div>
+                <div class="resumen-box">
+                    <p><strong>Tipo de huevo:</strong> <span id="resumen_tipo">No seleccionado</span></p>
+                    <p><strong>Motivo:</strong> <span id="resumen_motivo">No seleccionado</span></p>
+                    <p><strong>Cantidad:</strong> <span id="resumen_cantidad">1</span></p>
+                    <p><strong>Usuario:</strong> {{ usuario.nombre }}</p>
+                </div>
+            </div>
+
+            <button type="submit" class="confirmar-btn">✅ Confirmar salida</button>
+        </form>
+
+        <a href="/dashboard" class="btn-volver">⬅ Volver al menú principal</a>
+
+        <hr>
+
+        <h2>Historial de salidas</h2>
+        <div class="historial-scroll">
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Tipo</th>
+                    <th>Motivo</th>
+                    <th>Cantidad</th>
+                    <th>Responsable</th>
+                    <th>Fecha</th>
+                </tr>
+                {% for s in salidas %}
+                <tr>
+                    <td>{{ s.id }}</td>
+                    <td>{{ s.tipo_huevo }}</td>
+                    <td>{{ s.motivo }}</td>
+                    <td>{{ s.cantidad }}</td>
+                    <td>{{ s.responsable }}</td>
+                    <td>{{ s.fecha }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    let tipoSeleccionado = null;
+    let motivoSeleccionado = null;
+
+    const tipoInput = document.getElementById("tipo_huevo");
+    const motivoInput = document.getElementById("motivo");
+    const cantidadInput = document.getElementById("cantidad");
+
+    const resumenTipo = document.getElementById("resumen_tipo");
+    const resumenMotivo = document.getElementById("resumen_motivo");
+    const resumenCantidad = document.getElementById("resumen_cantidad");
+
+    const tipoCards = document.querySelectorAll(".tipo-card");
+    const motivosGrid = document.getElementById("motivosGrid");
+
+    tipoCards.forEach(card => {
+        card.addEventListener("click", () => {
+            tipoCards.forEach(c => c.classList.remove("selected"));
+            card.classList.add("selected");
+
+            tipoSeleccionado = card.dataset.tipo;
+            tipoInput.value = tipoSeleccionado;
+
+            actualizarMotivos();
+            actualizarResumen();
+        });
+    });
+
+    function actualizarMotivos() {
+        motivosGrid.innerHTML = "";
+        motivoSeleccionado = null;
+        motivoInput.value = "";
+
+        let motivos = [];
+
+        if (tipoSeleccionado === "Ponedoras") {
+            motivos = ["Roto", "Pequeño"];
+        } else if (tipoSeleccionado === "Ponedoras de afuera" || tipoSeleccionado === "Jolota") {
+            motivos = ["Incubadora", "Roto"];
+        }
+
+        motivos.forEach(motivo => {
+            const div = document.createElement("div");
+            div.className = "touch-option motivo-card";
+            div.innerHTML = `
+                <div class="nombre">${motivo}</div>
+                <div class="detalle">Selecciona este motivo</div>
+            `;
+
+            div.addEventListener("click", () => {
+                document.querySelectorAll(".motivo-card").forEach(c => c.classList.remove("selected"));
+                div.classList.add("selected");
+
+                motivoSeleccionado = motivo;
+                motivoInput.value = motivoSeleccionado;
+                actualizarResumen();
+            });
+
+            motivosGrid.appendChild(div);
+        });
+    }
+
+    function cambiarCantidad(valor) {
+        let actual = parseInt(cantidadInput.value) || 1;
+        actual += valor;
+        if (actual < 1) actual = 1;
+        cantidadInput.value = actual;
+        actualizarResumen();
+    }
+
+    cantidadInput.addEventListener("input", actualizarResumen);
+
+    function actualizarResumen() {
+        resumenTipo.textContent = tipoSeleccionado || "No seleccionado";
+        resumenMotivo.textContent = motivoSeleccionado || "No seleccionado";
+        resumenCantidad.textContent = parseInt(cantidadInput.value) || 1;
+    }
+
+    document.getElementById("salidaForm").addEventListener("submit", function(e) {
+        if (!tipoInput.value) {
+            e.preventDefault();
+            alert("Selecciona el tipo de huevo.");
+            return;
+        }
+
+        if (!motivoInput.value) {
+            e.preventDefault();
+            alert("Selecciona el motivo de salida.");
+            return;
+        }
+    });
+
+    actualizarResumen();
+</script>
+</body>
+</html>

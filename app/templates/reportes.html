@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reportes - Huevos Alak</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-card">
+            <h1>Reportes generales</h1>
+
+            <p><strong>Total ventas:</strong> ${{ total_ventas }}</p>
+            <p><strong>Huevos vendidos:</strong> {{ total_huevos_vendidos }}</p>
+            <p><strong>Producción total:</strong> {{ total_produccion }}</p>
+
+            <hr>
+
+            <h2>Diferencia</h2>
+            <p><strong>{{ diferencia }} huevos</strong></p>
+
+            <br>
+            <a href="/dashboard" class="btn-volver">⬅ Volver al menú principal</a>
+        </div>
+    </div>
+</body>
+</html>

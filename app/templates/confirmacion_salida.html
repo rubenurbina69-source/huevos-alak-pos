@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salida confirmada</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .confirm-wrap { max-width: 760px; margin: 0 auto; }
+        .confirm-header {
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+            border-radius: 22px;
+            padding: 28px 24px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 0 24px rgba(255,122,0,.18);
+            margin-bottom: 24px;
+        }
+        .confirm-card {
+            background: #121212;
+            border: 1px solid #2a2a2a;
+            border-radius: 22px;
+            padding: 26px;
+        }
+        .confirm-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+        }
+        .confirm-item {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 16px;
+            padding: 16px;
+        }
+        .confirm-item strong {
+            display: block;
+            color: #ff7a00;
+            margin-bottom: 6px;
+        }
+        .confirm-item span {
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .confirm-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-top: 24px;
+        }
+        .confirm-btn {
+            display: inline-block;
+            text-align: center;
+            padding: 16px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            background: #1e1e1e;
+            color: white;
+            border: 1px solid #2a2a2a;
+        }
+        .confirm-btn:hover {
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+        }
+        .confirm-btn.primario {
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+            border: none;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <div class="dashboard-card confirm-wrap">
+        <div class="confirm-header">
+            <h1>✅ SALIDA CONFIRMADA</h1>
+            <p>La salida se registró correctamente</p>
+        </div>
+
+        {% if salida %}
+        <div class="confirm-card">
+            <div class="confirm-grid">
+                <div class="confirm-item">
+                    <strong>Folio</strong>
+                    <span>{{ salida.id }}</span>
+                </div>
+                <div class="confirm-item">
+                    <strong>Tipo de huevo</strong>
+                    <span>{{ salida.tipo_huevo }}</span>
+                </div>
+                <div class="confirm-item">
+                    <strong>Motivo</strong>
+                    <span>{{ salida.motivo }}</span>
+                </div>
+                <div class="confirm-item">
+                    <strong>Cantidad</strong>
+                    <span>{{ salida.cantidad }}</span>
+                </div>
+                <div class="confirm-item">
+                    <strong>Usuario</strong>
+                    <span>{{ salida.responsable }}</span>
+                </div>
+            </div>
+
+            <div class="confirm-actions">
+                <a href="/salidas" class="confirm-btn primario">Nueva salida</a>
+                <a href="/dashboard" class="confirm-btn">Menú principal</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Menú principal</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .dashboard-title {
+            text-align: center;
+            font-size: 34px;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .dashboard-subtitle {
+            text-align: center;
+            color: #aaaaaa;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+
+        .usuario-info {
+            background: #121212;
+            border: 1px solid #2a2a2a;
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 25px;
+            box-shadow: 0 0 20px rgba(255, 122, 0, 0.10);
+        }
+
+        .usuario-info p {
+            margin: 8px 0;
+            color: white;
+            font-size: 17px;
+        }
+
+        .usuario-info strong {
+            color: #ff7a00;
+        }
+
+        .alerta-box {
+            background: #2a0000;
+            border: 1px solid #7a1a1a;
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 25px;
+            box-shadow: 0 0 20px rgba(255, 80, 80, 0.10);
+        }
+
+        .alerta-box h2 {
+            margin-top: 0;
+            color: #ff6b6b;
+            font-size: 24px;
+        }
+
+        .alerta-box p {
+            color: #ffd6d6;
+            margin: 6px 0;
+            font-size: 16px;
+        }
+
+        .ok-box {
+            background: #102010;
+            border: 1px solid #244224;
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 25px;
+            box-shadow: 0 0 20px rgba(76, 255, 136, 0.08);
+        }
+
+        .ok-box h2 {
+            margin-top: 0;
+            color: #4cff88;
+            font-size: 22px;
+        }
+
+        .ok-box p {
+            color: #d7ffe5;
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .menu-grid-premium {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .menu-card {
+            background: #121212;
+            border: 1px solid #2a2a2a;
+            border-radius: 20px;
+            padding: 24px 18px;
+            text-decoration: none;
+            color: white;
+            transition: 0.2s ease;
+            box-shadow: 0 0 18px rgba(255, 122, 0, 0.08);
+            display: block;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-4px);
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+            color: white;
+        }
+
+        .menu-card .icono {
+            font-size: 34px;
+            margin-bottom: 10px;
+        }
+
+        .menu-card .titulo {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .menu-card .detalle {
+            font-size: 14px;
+            color: #d9d9d9;
+            line-height: 1.4;
+        }
+
+        .menu-card:hover .detalle {
+            color: white;
+        }
+
+        .acciones-finales {
+            margin-top: 28px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .btn-final {
+            display: inline-block;
+            padding: 14px 18px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: bold;
+            background: #1e1e1e;
+            color: white;
+            border: 1px solid #2a2a2a;
+        }
+
+        .btn-final:hover {
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <div class="dashboard-card">
+
+        <h1 class="dashboard-title">Huevos Alak POS</h1>
+        <p class="dashboard-subtitle">Panel principal del sistema</p>
+
+        <div class="usuario-info">
+            <p><strong>Usuario:</strong> {{ usuario.nombre }}</p>
+            <p><strong>Rol:</strong> {{ usuario.rol }}</p>
+        </div>
+
+        {% if alertas_bajas %}
+        <div class="alerta-box">
+            <h2>⚠ Huevos de Ponedoras bajo</h2>
+            {% for item in alertas_bajas %}
+                <p><strong>{{ item.tipo_huevo }}</strong>: {{ item.cantidad }} huevos disponibles</p>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="ok-box">
+            <h2>✅ Inventario estable</h2>
+            <p>No hay categorías con inventario bajo en este momento.</p>
+        </div>
+        {% endif %}
+
+        <div class="menu-grid-premium">
+            <a class="menu-card" href="/produccion">
+                <div class="icono">🥚</div>
+                <div class="titulo">Producción</div>
+                <div class="detalle">Registrar producción diaria por tipo de huevo.</div>
+            </a>
+
+            <a class="menu-card" href="/ventas">
+                <div class="icono">💰</div>
+                <div class="titulo">Ventas</div>
+                <div class="detalle">Registrar ventas rápidas con pantalla táctil.</div>
+            </a>
+
+            <a class="menu-card" href="/salidas">
+                <div class="icono">📤</div>
+                <div class="titulo">Salidas</div>
+                <div class="detalle">Registrar incubadora, rotos y pequeños.</div>
+            </a>
+
+            <a class="menu-card" href="/inventario">
+                <div class="icono">📦</div>
+                <div class="titulo">Inventario</div>
+                <div class="detalle">Consultar existencias actuales por tipo de huevo.</div>
+            </a>
+
+            <a class="menu-card" href="/gastos">
+                <div class="icono">🧾</div>
+                <div class="titulo">Gastos</div>
+                <div class="detalle">Registrar gastos y llevar control semanal.</div>
+            </a>
+
+            <a class="menu-card" href="/mi-cuenta">
+                <div class="icono">👤</div>
+                <div class="titulo">Mi cuenta</div>
+                <div class="detalle">Cambiar contraseña y consultar tu perfil.</div>
+            </a>
+
+            {% if usuario.rol == "admin" %}
+            <a class="menu-card" href="/productos">
+                <div class="icono">🛒</div>
+                <div class="titulo">Productos</div>
+                <div class="detalle">Administrar presentaciones y precios.</div>
+            </a>
+
+            <a class="menu-card" href="/cortes">
+                <div class="icono">📊</div>
+                <div class="titulo">Cortes</div>
+                <div class="detalle">Realizar corte semanal y consultar histórico.</div>
+            </a>
+
+            <a class="menu-card" href="/bitacora">
+                <div class="icono">📘</div>
+                <div class="titulo">Bitácora</div>
+                <div class="detalle">Ver movimientos y acciones del sistema.</div>
+            </a>
+
+            <a class="menu-card" href="/usuarios">
+                <div class="icono">🔐</div>
+                <div class="titulo">Usuarios</div>
+                <div class="detalle">Administrar cuentas, roles y accesos.</div>
+            </a>
+            {% endif %}
+        </div>
+
+        <div class="acciones-finales">
+            <a href="/logout" class="btn-final">Cerrar sesión</a>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar usuario</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .error-box {
+            color: #b00020;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <div class="dashboard-card">
+        <h1>Editar usuario</h1>
+        <p><strong>Administrador actual:</strong> {{ usuario.nombre }}</p>
+
+        {% if error %}
+            <p class="error-box">{{ error }}</p>
+        {% endif %}
+
+        <form action="/usuarios/editar/{{ user.id }}" method="post">
+            <label>Nombre completo</label>
+            <input type="text" name="nombre" value="{{ user.nombre }}" required>
+
+            <label>Nombre de usuario</label>
+            <input type="text" name="usuario_login" value="{{ user.usuario }}" required>
+
+            <label>Rol</label>
+            <select name="rol" required>
+                <option value="operador" {% if user.rol == "operador" %}selected{% endif %}>Operador</option>
+                <option value="admin" {% if user.rol == "admin" %}selected{% endif %}>Administrador</option>
+            </select>
+
+            <button type="submit">Guardar cambios</button>
+        </form>
+
+        <a href="/usuarios" class="btn-volver">Volver a usuarios</a>
+    </div>
+</div>
+</body>
+</html>

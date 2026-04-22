@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traspasos - Huevos Alak POS</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-card">
+            <h1>Traspasos de inventario</h1>
+            <p>Mueve huevos entre categorías.</p>
+
+            {% if mensaje %}
+                <p style="color: green; font-weight: bold;">{{ mensaje }}</p>
+            {% endif %}
+
+            <form action="/traspasos" method="post">
+                <label>Tipo origen</label>
+                <select name="tipo_origen" required>
+                    <option value="">Selecciona una opción</option>
+                    <option value="Ponedoras">Ponedoras</option>
+                    <option value="Ponedoras de afuera">Ponedoras de afuera</option>
+                    <option value="Jolota">Jolota</option>
+                </select>
+
+                <label>Tipo destino</label>
+                <select name="tipo_destino" required>
+                    <option value="">Selecciona una opción</option>
+                    <option value="Ponedoras">Ponedoras</option>
+                    <option value="Ponedoras de afuera">Ponedoras de afuera</option>
+                    <option value="Jolota">Jolota</option>
+                </select>
+
+                <label>Cantidad de huevos</label>
+                <input type="number" name="cantidad" required>
+
+                <label>Responsable</label>
+                <input type="text" name="responsable" required>
+
+                <button type="submit">Guardar traspaso</button>
+            </form>
+
+            <hr>
+
+            <h2>Historial de traspasos</h2>
+
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Origen</th>
+                    <th>Destino</th>
+                    <th>Cantidad</th>
+                    <th>Responsable</th>
+                    <th>Fecha</th>
+                </tr>
+
+                {% for t in traspasos %}
+                <tr>
+                    <td>{{ t.id }}</td>
+                    <td>{{ t.tipo_origen }}</td>
+                    <td>{{ t.tipo_destino }}</td>
+                    <td>{{ t.cantidad }}</td>
+                    <td>{{ t.responsable }}</td>
+                    <td>{{ t.fecha }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+
+            <a href="/dashboard" class="btn-volver">⬅ Volver al menú principal</a>
+        </div>
+    </div>
+</body>
+</html>

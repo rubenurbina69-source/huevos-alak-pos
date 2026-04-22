@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ventas Touch Pro</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .ventas-title {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .ventas-subtitle {
+            text-align: center;
+            color: #aaaaaa;
+            margin-bottom: 25px;
+        }
+
+        .usuario-activo {
+            text-align: center;
+            font-weight: bold;
+            color: #ff7a00;
+            margin-bottom: 20px;
+        }
+
+        .step-box {
+            background: #121212;
+            border: 1px solid #2a2a2a;
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 22px;
+            box-shadow: 0 0 20px rgba(255, 122, 0, 0.12);
+        }
+
+        .step-title {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .touch-option {
+            background: #1e1e1e;
+            color: white;
+            border-radius: 18px;
+            padding: 22px 16px;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            transition: 0.2s ease;
+            border: 1px solid #2a2a2a;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.10);
+        }
+
+        .touch-option:hover {
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+            transform: translateY(-2px);
+        }
+
+        .touch-option.selected {
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+            color: white;
+        }
+
+        .touch-option .nombre {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .touch-option .detalle {
+            font-size: 14px;
+            color: #dddddd;
+        }
+
+        .cantidad-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .cantidad-btn {
+            width: 70px;
+            height: 70px;
+            border: none;
+            border-radius: 18px;
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+            color: white;
+            font-size: 34px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .cantidad-btn:hover {
+            filter: brightness(1.05);
+        }
+
+        .cantidad-input {
+            width: 140px;
+            height: 70px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            border-radius: 18px;
+            border: 1px solid #2a2a2a;
+            background: #1e1e1e;
+            color: white;
+        }
+
+        .resumen-box {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 18px;
+            padding: 18px;
+        }
+
+        .resumen-box p {
+            margin: 8px 0;
+            font-size: 18px;
+            color: #ffffff;
+        }
+
+        .confirmar-btn {
+            width: 100%;
+            font-size: 22px;
+            padding: 18px;
+            border-radius: 16px;
+            margin-top: 10px;
+            border: none;
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+            color: white;
+            cursor: pointer;
+        }
+
+        .confirmar-btn:hover {
+            filter: brightness(1.05);
+        }
+
+        .mini-link {
+            display: inline-block;
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: #1e1e1e;
+            color: #ffffff;
+            text-decoration: none;
+            border: 1px solid #2a2a2a;
+        }
+
+        .mini-link:hover {
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+            color: white;
+        }
+
+        .historial-scroll {
+            overflow-x: auto;
+        }
+
+        .historial-scroll table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #121212;
+        }
+
+        .historial-scroll th,
+        .historial-scroll td {
+            padding: 12px;
+            border-bottom: 1px solid #2a2a2a;
+            text-align: left;
+            color: white;
+        }
+
+        .historial-scroll th {
+            color: #ff7a00;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <div class="dashboard-card">
+
+        <h1 class="ventas-title">Ventas Touch Pro</h1>
+        <p class="ventas-subtitle">Pantalla táctil para registrar ventas rápidas</p>
+        <p class="usuario-activo">Usuario activo: {{ usuario.nombre }}</p>
+
+        <form action="/ventas" method="post" id="ventaForm">
+            <input type="hidden" name="producto_id" id="producto_id" required>
+
+            <div class="step-box">
+                <div class="step-title">1. Elige la presentación</div>
+                <div class="card-grid">
+                    {% for p in productos %}
+                    <div class="touch-option producto-card"
+                         data-id="{{ p.id }}"
+                         data-nombre="{{ p.nombre }}"
+                         data-precio="{{ p.precio }}"
+                         data-unidades="{{ p.unidades_por_presentacion }}">
+                        <div class="nombre">{{ p.nombre }}</div>
+                        <div class="detalle">{{ p.unidades_por_presentacion }} huevos</div>
+                        <div class="detalle">${{ p.precio }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="step-box">
+                <div class="step-title">2. Cantidad</div>
+                <div class="cantidad-box">
+                    <button type="button" class="cantidad-btn" onclick="cambiarCantidad(-1)">−</button>
+                    <input type="number" class="cantidad-input" id="cantidad_presentaciones" name="cantidad_presentaciones" value="1" min="1" required>
+                    <button type="button" class="cantidad-btn" onclick="cambiarCantidad(1)">+</button>
+                </div>
+            </div>
+
+            <div class="step-box">
+                <div class="step-title">3. Resumen</div>
+                <div class="resumen-box">
+                    <p><strong>Presentación:</strong> <span id="resumen_producto">No seleccionada</span></p>
+                    <p><strong>Cantidad:</strong> <span id="resumen_cantidad">1</span></p>
+                    <p><strong>Huevos reales:</strong> <span id="resumen_huevos">0</span></p>
+                    <p><strong>Total:</strong> $<span id="resumen_total">0.00</span></p>
+                    <p><strong>Origen:</strong> Ponedoras</p>
+                    <p><strong>Usuario:</strong> {{ usuario.nombre }}</p>
+                </div>
+            </div>
+
+            <button type="submit" class="confirmar-btn">✅ Confirmar venta</button>
+        </form>
+
+        <a href="/dashboard" class="btn-volver">⬅ Volver al menú principal</a>
+
+        <hr>
+
+        <h2>Historial de ventas</h2>
+        <div class="historial-scroll">
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Presentación</th>
+                    <th>Cantidad</th>
+                    <th>Huevos</th>
+                    <th>Total</th>
+                    <th>Fecha</th>
+                    <th>Ticket</th>
+                </tr>
+                {% for v, p in ventas %}
+                <tr>
+                    <td>{{ v.id }}</td>
+                    <td>{{ p.nombre }}</td>
+                    <td>{{ v.cantidad_presentaciones }}</td>
+                    <td>{{ v.huevos_reales }}</td>
+                    <td>${{ v.total }}</td>
+                    <td>{{ v.fecha }}</td>
+                    <td><a href="/ticket/{{ v.id }}" class="mini-link">Ver ticket</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    let productoSeleccionado = null;
+
+    const productoInput = document.getElementById("producto_id");
+    const cantidadInput = document.getElementById("cantidad_presentaciones");
+
+    const resumenProducto = document.getElementById("resumen_producto");
+    const resumenCantidad = document.getElementById("resumen_cantidad");
+    const resumenHuevos = document.getElementById("resumen_huevos");
+    const resumenTotal = document.getElementById("resumen_total");
+
+    const tarjetasProducto = document.querySelectorAll(".producto-card");
+
+    tarjetasProducto.forEach(card => {
+        card.addEventListener("click", () => {
+            tarjetasProducto.forEach(c => c.classList.remove("selected"));
+            card.classList.add("selected");
+
+            productoSeleccionado = {
+                id: card.dataset.id,
+                nombre: card.dataset.nombre,
+                precio: parseFloat(card.dataset.precio),
+                unidades: parseInt(card.dataset.unidades)
+            };
+
+            productoInput.value = productoSeleccionado.id;
+            actualizarResumen();
+        });
+    });
+
+    function cambiarCantidad(valor) {
+        let actual = parseInt(cantidadInput.value) || 1;
+        actual += valor;
+        if (actual < 1) actual = 1;
+        cantidadInput.value = actual;
+        actualizarResumen();
+    }
+
+    cantidadInput.addEventListener("input", actualizarResumen);
+
+    function actualizarResumen() {
+        const cantidad = parseInt(cantidadInput.value) || 1;
+        resumenCantidad.textContent = cantidad;
+
+        if (productoSeleccionado) {
+            const huevos = cantidad * productoSeleccionado.unidades;
+            const total = cantidad * productoSeleccionado.precio;
+
+            resumenProducto.textContent = productoSeleccionado.nombre;
+            resumenHuevos.textContent = huevos;
+            resumenTotal.textContent = total.toFixed(2);
+        } else {
+            resumenProducto.textContent = "No seleccionada";
+            resumenHuevos.textContent = "0";
+            resumenTotal.textContent = "0.00";
+        }
+    }
+
+    document.getElementById("ventaForm").addEventListener("submit", function(e) {
+        if (!productoInput.value) {
+            e.preventDefault();
+            alert("Selecciona una presentación antes de confirmar la venta.");
+        }
+    });
+
+    actualizarResumen();
+</script>
+</body>
+</html>

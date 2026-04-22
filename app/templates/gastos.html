@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gastos Touch Pro</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .gastos-title {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .gastos-subtitle {
+            text-align: center;
+            color: #aaaaaa;
+            margin-bottom: 25px;
+        }
+
+        .usuario-activo {
+            text-align: center;
+            font-weight: bold;
+            color: #ff7a00;
+            margin-bottom: 20px;
+        }
+
+        .step-box {
+            background: #121212;
+            border: 1px solid #2a2a2a;
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 22px;
+            box-shadow: 0 0 20px rgba(255, 122, 0, 0.12);
+        }
+
+        .step-title {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .touch-option {
+            background: #1e1e1e;
+            color: white;
+            border-radius: 18px;
+            padding: 22px 16px;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            transition: 0.2s ease;
+            border: 1px solid #2a2a2a;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.10);
+        }
+
+        .touch-option:hover {
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+            transform: translateY(-2px);
+        }
+
+        .touch-option.selected {
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+            color: white;
+        }
+
+        .touch-option .nombre {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .touch-option .detalle {
+            font-size: 14px;
+            color: #dddddd;
+        }
+
+        .manual-input {
+            width: 100%;
+            padding: 16px;
+            border-radius: 14px;
+            border: 1px solid #2a2a2a;
+            background: #1e1e1e;
+            color: white;
+            font-size: 18px;
+            box-sizing: border-box;
+        }
+
+        .monto-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .monto-btn {
+            width: 70px;
+            height: 70px;
+            border: none;
+            border-radius: 18px;
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+            color: white;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .monto-btn:hover {
+            filter: brightness(1.05);
+        }
+
+        .monto-input {
+            width: 180px;
+            height: 70px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            border-radius: 18px;
+            border: 1px solid #2a2a2a;
+            background: #1e1e1e;
+            color: white;
+        }
+
+        .resumen-box {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 18px;
+            padding: 18px;
+        }
+
+        .resumen-box p {
+            margin: 8px 0;
+            font-size: 18px;
+            color: white;
+        }
+
+        .confirmar-btn {
+            width: 100%;
+            font-size: 22px;
+            padding: 18px;
+            border-radius: 16px;
+            margin-top: 10px;
+            border: none;
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+            color: white;
+            cursor: pointer;
+        }
+
+        .confirmar-btn:hover {
+            filter: brightness(1.05);
+        }
+
+        .historial-scroll {
+            overflow-x: auto;
+        }
+
+        .historial-scroll table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #121212;
+        }
+
+        .historial-scroll th,
+        .historial-scroll td {
+            padding: 12px;
+            border-bottom: 1px solid #2a2a2a;
+            text-align: left;
+            color: white;
+        }
+
+        .historial-scroll th {
+            color: #ff7a00;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <div class="dashboard-card">
+
+        <h1 class="gastos-title">Gastos Touch Pro</h1>
+        <p class="gastos-subtitle">Registro rápido de gastos del negocio</p>
+        <p class="usuario-activo">Usuario activo: {{ usuario.nombre }}</p>
+
+        <form action="/gastos" method="post" id="gastoForm">
+            <input type="hidden" name="concepto" id="concepto" required>
+
+            <div class="step-box">
+                <div class="step-title">1. Elige un concepto rápido</div>
+                <div class="card-grid">
+                    <div class="touch-option concepto-card" data-concepto="Alimento">
+                        <div class="nombre">Alimento</div>
+                        <div class="detalle">Compra de alimento</div>
+                    </div>
+
+                    <div class="touch-option concepto-card" data-concepto="Transporte">
+                        <div class="nombre">Transporte</div>
+                        <div class="detalle">Movilidad y entregas</div>
+                    </div>
+
+                    <div class="touch-option concepto-card" data-concepto="Mantenimiento">
+                        <div class="nombre">Mantenimiento</div>
+                        <div class="detalle">Reparaciones y ajustes</div>
+                    </div>
+
+                    <div class="touch-option concepto-card" data-concepto="Insumos">
+                        <div class="nombre">Insumos</div>
+                        <div class="detalle">Materiales y compras</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-box">
+                <div class="step-title">2. O escribe otro concepto</div>
+                <input type="text" id="concepto_manual" class="manual-input" placeholder="Escribe otro concepto si no está en la lista">
+            </div>
+
+            <div class="step-box">
+                <div class="step-title">3. Monto</div>
+                <div class="monto-box">
+                    <button type="button" class="monto-btn" onclick="cambiarMonto(-10)">-10</button>
+                    <input type="number" step="0.01" class="monto-input" id="monto" name="monto" value="0" min="0" required>
+                    <button type="button" class="monto-btn" onclick="cambiarMonto(10)">+10</button>
+                </div>
+            </div>
+
+            <div class="step-box">
+                <div class="step-title">4. Resumen</div>
+                <div class="resumen-box">
+                    <p><strong>Concepto:</strong> <span id="resumen_concepto">No seleccionado</span></p>
+                    <p><strong>Monto:</strong> $<span id="resumen_monto">0.00</span></p>
+                    <p><strong>Usuario:</strong> {{ usuario.nombre }}</p>
+                </div>
+            </div>
+
+            <button type="submit" class="confirmar-btn">✅ Guardar gasto</button>
+        </form>
+
+        <a href="/dashboard" class="btn-volver">⬅ Volver al menú principal</a>
+
+        <hr>
+
+        <h2>Historial de gastos</h2>
+        <div class="historial-scroll">
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Concepto</th>
+                    <th>Monto</th>
+                    <th>Responsable</th>
+                    <th>Fecha</th>
+                </tr>
+                {% for g in gastos %}
+                <tr>
+                    <td>{{ g.id }}</td>
+                    <td>{{ g.concepto }}</td>
+                    <td>${{ g.monto }}</td>
+                    <td>{{ g.responsable }}</td>
+                    <td>{{ g.fecha }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    let conceptoSeleccionado = null;
+
+    const conceptoInput = document.getElementById("concepto");
+    const conceptoManualInput = document.getElementById("concepto_manual");
+    const montoInput = document.getElementById("monto");
+
+    const resumenConcepto = document.getElementById("resumen_concepto");
+    const resumenMonto = document.getElementById("resumen_monto");
+
+    const conceptoCards = document.querySelectorAll(".concepto-card");
+
+    conceptoCards.forEach(card => {
+        card.addEventListener("click", () => {
+            conceptoCards.forEach(c => c.classList.remove("selected"));
+            card.classList.add("selected");
+
+            conceptoSeleccionado = card.dataset.concepto;
+            conceptoInput.value = conceptoSeleccionado;
+            conceptoManualInput.value = "";
+            actualizarResumen();
+        });
+    });
+
+    conceptoManualInput.addEventListener("input", () => {
+        if (conceptoManualInput.value.trim() !== "") {
+            conceptoCards.forEach(c => c.classList.remove("selected"));
+            conceptoSeleccionado = conceptoManualInput.value.trim();
+            conceptoInput.value = conceptoSeleccionado;
+        } else {
+            conceptoSeleccionado = null;
+            conceptoInput.value = "";
+        }
+        actualizarResumen();
+    });
+
+    function cambiarMonto(valor) {
+        let actual = parseFloat(montoInput.value) || 0;
+        actual += valor;
+        if (actual < 0) actual = 0;
+        montoInput.value = actual.toFixed(2);
+        actualizarResumen();
+    }
+
+    montoInput.addEventListener("input", actualizarResumen);
+
+    function actualizarResumen() {
+        resumenConcepto.textContent = conceptoInput.value || "No seleccionado";
+        resumenMonto.textContent = (parseFloat(montoInput.value) || 0).toFixed(2);
+    }
+
+    document.getElementById("gastoForm").addEventListener("submit", function(e) {
+        if (!conceptoInput.value.trim()) {
+            e.preventDefault();
+            alert("Selecciona o escribe un concepto.");
+            return;
+        }
+
+        if ((parseFloat(montoInput.value) || 0) <= 0) {
+            e.preventDefault();
+            alert("Ingresa un monto mayor a cero.");
+            return;
+        }
+    });
+
+    actualizarResumen();
+</script>
+</body>
+</html>

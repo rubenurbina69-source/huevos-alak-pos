@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Bitácora</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="dashboard-container">
+    <div class="dashboard-card">
+        <h1>Bitácora</h1>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Acción</th>
+                <th>Detalle</th>
+                <th>Fecha</th>
+            </tr>
+            {% for m in movimientos %}
+            <tr>
+                <td>{{ m.id }}</td>
+                <td>{{ m.usuario }}</td>
+                <td>{{ m.accion }}</td>
+                <td>{{ m.detalle }}</td>
+                <td>{{ m.fecha }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <a href="/dashboard" class="btn-volver">Volver</a>
+    </div>
+</div>
+</body>
+</html>

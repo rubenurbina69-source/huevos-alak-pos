@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Huevos Alak POS</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="login-body">
+
+<div class="login-container">
+
+    <div class="login-card">
+
+        <img src="/static/logo.png" class="logo">
+
+        <h2>Bienvenido</h2>
+        <p class="sub">Sistema de control Huevos Alak</p>
+
+        <form action="/login" method="post">
+            
+            <input type="text" name="usuario" placeholder="Usuario" required>
+
+            <input type="password" name="password" placeholder="Contraseña" required>
+
+            <button type="submit">Entrar</button>
+
+        </form>
+
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+
+    </div>
+
+</div>
+
+</body>
+</html>

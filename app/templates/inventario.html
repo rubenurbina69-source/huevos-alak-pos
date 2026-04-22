@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario Premium</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .inventario-title {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .inventario-subtitle {
+            text-align: center;
+            color: #aaaaaa;
+            margin-bottom: 25px;
+        }
+
+        .usuario-activo {
+            text-align: center;
+            font-weight: bold;
+            color: #ff7a00;
+            margin-bottom: 20px;
+        }
+
+        .inventario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .inventario-card {
+            background: #121212;
+            border: 1px solid #2a2a2a;
+            border-radius: 20px;
+            padding: 24px 18px;
+            box-shadow: 0 0 20px rgba(255, 122, 0, 0.10);
+            transition: 0.2s ease;
+        }
+
+        .inventario-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 24px rgba(255, 122, 0, 0.18);
+        }
+
+        .inventario-icono {
+            font-size: 34px;
+            margin-bottom: 10px;
+        }
+
+        .inventario-nombre {
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .inventario-label {
+            color: #ff7a00;
+            font-size: 14px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .inventario-cantidad {
+            font-size: 40px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .inventario-unidad {
+            color: #aaaaaa;
+            font-size: 15px;
+            margin-top: 4px;
+        }
+
+        .seccion-tabla {
+            background: #121212;
+            border: 1px solid #2a2a2a;
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: 0 0 18px rgba(255, 122, 0, 0.08);
+        }
+
+        .seccion-tabla h2 {
+            color: white;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .tabla-scroll {
+            overflow-x: auto;
+        }
+
+        .tabla-scroll table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #121212;
+        }
+
+        .tabla-scroll th,
+        .tabla-scroll td {
+            padding: 12px;
+            border-bottom: 1px solid #2a2a2a;
+            text-align: left;
+            color: white;
+        }
+
+        .tabla-scroll th {
+            color: #ff7a00;
+        }
+
+        .estado-ok {
+            color: #4cff88;
+            font-weight: bold;
+        }
+
+        .estado-medio {
+            color: #ffb347;
+            font-weight: bold;
+        }
+
+        .estado-bajo {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <div class="dashboard-card">
+
+        <h1 class="inventario-title">Inventario Premium</h1>
+        <p class="inventario-subtitle">Consulta rápida del inventario actual por tipo de huevo</p>
+        <p class="usuario-activo">Usuario activo: {{ usuario.nombre }}</p>
+
+        <div class="inventario-grid">
+            {% for i in inventario %}
+            <div class="inventario-card">
+                <div class="inventario-icono">🥚</div>
+                <div class="inventario-nombre">{{ i.tipo_huevo }}</div>
+                <div class="inventario-label">Existencia actual</div>
+                <div class="inventario-cantidad">{{ i.cantidad }}</div>
+                <div class="inventario-unidad">huevos disponibles</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="seccion-tabla">
+            <h2>Detalle de inventario</h2>
+            <div class="tabla-scroll">
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tipo de huevo</th>
+                        <th>Cantidad</th>
+                        <th>Estado</th>
+                    </tr>
+                    {% for i in inventario %}
+                    <tr>
+                        <td>{{ i.id }}</td>
+                        <td>{{ i.tipo_huevo }}</td>
+                        <td>{{ i.cantidad }}</td>
+                        <td>
+                            {% if i.cantidad >= 100 %}
+                                <span class="estado-ok">Alto</span>
+                            {% elif i.cantidad >= 30 %}
+                                <span class="estado-medio">Medio</span>
+                            {% else %}
+                                <span class="estado-bajo">Bajo</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+
+        <a href="/dashboard" class="btn-volver">⬅ Volver al menú principal</a>
+
+    </div>
+</div>
+</body>
+</html>

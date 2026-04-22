@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .estado-activo {
+            color: #4cff88;
+            font-weight: bold;
+        }
+
+        .estado-inactivo {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+
+        .error-box {
+            color: #ff6b6b;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .acciones-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .btn-accion {
+            display: inline-block;
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+            text-align: center;
+            border: 1px solid #2a2a2a;
+            white-space: nowrap;
+        }
+
+        .btn-editar {
+            background: #1e1e1e;
+            color: white;
+        }
+
+        .btn-editar:hover {
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+            color: white;
+        }
+
+        .btn-reset {
+            background: #1e1e1e;
+            color: #ff7a00;
+            border: 1px solid #ff7a00;
+        }
+
+        .btn-reset:hover {
+            background: #ff7a00;
+            color: white;
+        }
+
+        .btn-eliminar {
+            background: #2a0000;
+            color: #ff6b6b;
+            border: 1px solid #5a1a1a;
+        }
+
+        .btn-eliminar:hover {
+            background: #c62828;
+            color: white;
+        }
+
+        .usuarios-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #121212;
+        }
+
+        .usuarios-table th,
+        .usuarios-table td {
+            padding: 12px;
+            border-bottom: 1px solid #2a2a2a;
+            text-align: left;
+            vertical-align: top;
+            color: white;
+        }
+
+        .usuarios-table th {
+            color: #ff7a00;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <div class="dashboard-card">
+        <h1>Administración de usuarios</h1>
+        <p><strong>Administrador actual:</strong> {{ usuario.nombre }}</p>
+
+        {% if error %}
+            <p class="error-box">{{ error }}</p>
+        {% endif %}
+
+        <h2>Crear usuario</h2>
+        <form action="/usuarios" method="post">
+            <label>Nombre completo</label>
+            <input type="text" name="nombre" required>
+
+            <label>Nombre de usuario</label>
+            <input type="text" name="usuario" required>
+
+            <label>Contraseña</label>
+            <input type="password" name="password" required>
+
+            <label>Rol</label>
+            <select name="rol" required>
+                <option value="operador">Operador</option>
+                <option value="admin">Administrador</option>
+            </select>
+
+            <button type="submit">Guardar usuario</button>
+        </form>
+
+        <hr>
+
+        <h2>Lista de usuarios</h2>
+        <div> class="tabla-scroll">
+        <table class="usuarios-table">
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Usuario</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+
+            {% for u in usuarios %}
+            <tr>
+                <td>{{ u.id }}</td>
+                <td>{{ u.nombre }}</td>
+                <td>{{ u.usuario }}</td>
+                <td>{{ u.rol }}</td>
+                <td>
+                    {% if u.activo %}
+                        <span class="estado-activo">Activo</span>
+                    {% else %}
+                        <span class="estado-inactivo">Inactivo</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="acciones-box">
+                        <a href="/usuarios/toggle/{{ u.id }}" class="btn-accion btn-editar">
+                            {% if u.activo %}Desactivar{% else %}Activar{% endif %}
+                        </a>
+
+                        <a href="/usuarios/editar/{{ u.id }}" class="btn-accion btn-editar">
+                            Editar
+                        </a>
+
+                        <a href="/usuarios/reset-password/{{ u.id }}" class="btn-accion btn-reset">
+                            Reset
+                        </a>
+
+                        {% if u.usuario != "admin" %}
+                        <a href="/usuarios/eliminar/{{ u.id }}" class="btn-accion btn-eliminar"
+                           onclick="return confirm('¿Seguro que deseas eliminar este usuario?')">
+                            Eliminar
+                        </a>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        </div>
+        
+
+        <a href="/dashboard" class="btn-volver">Volver</a>
+    </div>
+</div>
+</body>
+</html>

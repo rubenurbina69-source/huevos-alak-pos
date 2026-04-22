@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Producción Touch Pro</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .produccion-title {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .produccion-subtitle {
+            text-align: center;
+            color: #aaaaaa;
+            margin-bottom: 25px;
+        }
+
+        .usuario-activo {
+            text-align: center;
+            font-weight: bold;
+            color: #ff7a00;
+            margin-bottom: 20px;
+        }
+
+        .step-box {
+            background: #121212;
+            border: 1px solid #2a2a2a;
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 22px;
+            box-shadow: 0 0 20px rgba(255, 122, 0, 0.12);
+        }
+
+        .step-title {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .touch-option {
+            background: #1e1e1e;
+            color: white;
+            border-radius: 18px;
+            padding: 22px 16px;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            transition: 0.2s ease;
+            border: 1px solid #2a2a2a;
+        }
+
+        .touch-option:hover {
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+            transform: translateY(-2px);
+        }
+
+        .touch-option.selected {
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+            color: white;
+        }
+
+        .touch-option .nombre {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .touch-option .detalle {
+            font-size: 14px;
+            color: #dddddd;
+        }
+
+        .cantidad-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .cantidad-btn {
+            width: 70px;
+            height: 70px;
+            border: none;
+            border-radius: 18px;
+            background: linear-gradient(45deg, #ff7a00, #b13a00);
+            color: white;
+            font-size: 34px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .cantidad-input {
+            width: 140px;
+            height: 70px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            border-radius: 18px;
+            border: 1px solid #2a2a2a;
+            background: #1e1e1e;
+            color: white;
+        }
+
+        .resumen-box {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 18px;
+            padding: 18px;
+        }
+
+        .resumen-box p {
+            margin: 8px 0;
+            font-size: 18px;
+        }
+
+        .confirmar-btn {
+            font-size: 22px;
+            padding: 18px;
+            border-radius: 16px;
+            margin-top: 10px;
+        }
+
+        .historial-scroll {
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <div class="dashboard-card">
+
+        <h1 class="produccion-title">Producción Touch Pro</h1>
+        <p class="produccion-subtitle">Registro rápido de producción por tipo de huevo</p>
+        <p class="usuario-activo">Usuario activo: {{ usuario.nombre }}</p>
+
+        <form action="/produccion" method="post" id="produccionForm">
+            <input type="hidden" name="tipo_huevo" id="tipo_huevo" required>
+
+            <div class="step-box">
+                <div class="step-title">1. Elige el tipo de huevo</div>
+                <div class="card-grid">
+                    <div class="touch-option tipo-card" data-tipo="Ponedoras">
+                        <div class="nombre">Ponedoras</div>
+                        <div class="detalle">Producción normal</div>
+                    </div>
+
+                    <div class="touch-option tipo-card" data-tipo="Ponedoras de afuera">
+                        <div class="nombre">Ponedoras de afuera</div>
+                        <div class="detalle">Producción externa</div>
+                    </div>
+
+                    <div class="touch-option tipo-card" data-tipo="Jolota">
+                        <div class="nombre">Jolota</div>
+                        <div class="detalle">Producción especial</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-box">
+                <div class="step-title">2. Cantidad</div>
+                <div class="cantidad-box">
+                    <button type="button" class="cantidad-btn" onclick="cambiarCantidad(-1)">−</button>
+                    <input type="number" class="cantidad-input" id="cantidad" name="cantidad" value="1" min="1" required>
+                    <button type="button" class="cantidad-btn" onclick="cambiarCantidad(1)">+</button>
+                </div>
+            </div>
+
+            <div class="step-box">
+                <div class="step-title">3. Resumen</div>
+                <div class="resumen-box">
+                    <p><strong>Tipo de huevo:</strong> <span id="resumen_tipo">No seleccionado</span></p>
+                    <p><strong>Cantidad:</strong> <span id="resumen_cantidad">1</span></p>
+                    <p><strong>Usuario:</strong> {{ usuario.nombre }}</p>
+                </div>
+            </div>
+
+            <button type="submit" class="confirmar-btn">✅ Guardar producción</button>
+        </form>
+
+        <a href="/dashboard" class="btn-volver">⬅ Volver al menú principal</a>
+
+        <hr>
+
+        <h2>Historial de producción</h2>
+        <div class="historial-scroll">
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Tipo</th>
+                    <th>Cantidad</th>
+                    <th>Responsable</th>
+                    <th>Fecha</th>
+                </tr>
+                {% for r in registros %}
+                <tr>
+                    <td>{{ r.id }}</td>
+                    <td>{{ r.tipo_huevo }}</td>
+                    <td>{{ r.cantidad }}</td>
+                    <td>{{ r.responsable }}</td>
+                    <td>{{ r.fecha }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    let tipoSeleccionado = null;
+
+    const tipoInput = document.getElementById("tipo_huevo");
+    const cantidadInput = document.getElementById("cantidad");
+
+    const resumenTipo = document.getElementById("resumen_tipo");
+    const resumenCantidad = document.getElementById("resumen_cantidad");
+
+    const tipoCards = document.querySelectorAll(".tipo-card");
+
+    tipoCards.forEach(card => {
+        card.addEventListener("click", () => {
+            tipoCards.forEach(c => c.classList.remove("selected"));
+            card.classList.add("selected");
+
+            tipoSeleccionado = card.dataset.tipo;
+            tipoInput.value = tipoSeleccionado;
+            actualizarResumen();
+        });
+    });
+
+    function cambiarCantidad(valor) {
+        let actual = parseInt(cantidadInput.value) || 1;
+        actual += valor;
+        if (actual < 1) actual = 1;
+        cantidadInput.value = actual;
+        actualizarResumen();
+    }
+
+    cantidadInput.addEventListener("input", actualizarResumen);
+
+    function actualizarResumen() {
+        resumenTipo.textContent = tipoSeleccionado || "No seleccionado";
+        resumenCantidad.textContent = parseInt(cantidadInput.value) || 1;
+    }
+
+    document.getElementById("produccionForm").addEventListener("submit", function(e) {
+        if (!tipoInput.value) {
+            e.preventDefault();
+            alert("Selecciona el tipo de huevo.");
+        }
+    });
+
+    actualizarResumen();
+</script>
+</body>
+</html>
